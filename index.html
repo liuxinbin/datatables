@@ -7,13 +7,37 @@
 	<link rel="stylesheet" type="text/css" href="media/css/jquery.dataTables.css" />
 	<style type="text/css">
 		body {
-			font-size: 12px;
+			font-size: 1.5em;
 			text-align: left;
+		}
+		
+		#header {
+			text-align: center;
+		}
+		
+		#ttt, #sss {
+			display: inline-block;
+			padding: 2px;
+			margin: 50px 100px 50px 0;
+			width: 200px;
+			height: 50px;
+			font-size: 1.2em;
+		}
+		input{
+			padding: 5px;
+			outline: none;
+			border: 1px solid #eee;
 		}
 	</style>
 </head>
 
 <body>
+	<div id="header">
+		<select name="" id="ttt">
+		</select>
+		<select name="" id="sss">
+		</select>
+	</div>
 	<table id="myTable" class=" display">
 		<thead>
 			<tr>
@@ -34,6 +58,40 @@
 
 	<script src="media/js/jquery.js" type="text/javascript" charset="utf-8"></script>
 	<script src="media/js/jquery.dataTables.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function() {
+			$.ajax({
+				type: "get",
+				url: "data/SERVERPARTObject.json",
+				async: true,
+				success: function(data) {
+					var optionstring = "";
+					$.each(data.data, function(index) {
+						var name = data.data[index].SERVERPART_NAME;
+						optionstring += "<option value=\"" + name + "\" >" + name + "</option>";
+					});
+					$("#ttt").html("<option value=''>请选择服务器</option> " + optionstring);
+				}
+			})
+		})
+	</script>
+	<script type="text/javascript">
+		$(function() {
+			$.ajax({
+				type: "get",
+				url: "data/ServerPartShopObject.json",
+				async: true,
+				success: function(data) {
+					var optionstring = "";
+					$.each(data.data, function(index) {
+						var name = data.data[index].SHOPNAME;
+						optionstring += "<option value=\"" + name + "\" >" + name + "</option>";
+					});
+					$("#sss").html("<option value=''>请选择门店</option> " + optionstring);
+				}
+			})
+		})
+	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var lang = {
@@ -84,10 +142,9 @@
 				"stripeClasses": ["odd", "even"], //为奇偶行加上样式，兼容不支持CSS伪类的场合
 				"scrollY": false, //Y轴滚动
 				"sScrollX": "100%",
-				"sScrollXInner": "110%",
+				"sScrollXInner": "200%",
 				"bScrollCollapse": true, //水平限制宽度
-				
-		
+
 				"ajax": {
 					"url": "data/EndaccountObject.json",
 				},
@@ -113,31 +170,20 @@
 				],
 
 			})
+			$('#ttt').change(function() {
 
-			table.columns().flatten().each(function(colIdx) {
-				// Create the select list and search operation
-				var select = $('<select />')
-					.appendTo(
-						table.column(colIdx).footer()
-					)
-					.on('change', function() {
-						table
-							.column(colIdx)
-							.search($(this).val())
-							.draw();
-					});
-
-				// Get the search data for the first column and add to the select list
 				table
-					.column(colIdx)
-					.cache('search')
-					.sort()
-					.unique()
-					.each(function(d) {
-						select.append($('<option value="' + d + '">' + d + '</option>'));
-					});
+					.column(0)
+					.search($(this).val())
+					.draw();
+			});
+			$('#sss').change(function() {
 
-			})
+				table
+					.column(1)
+					.search($(this).val())
+					.draw();
+			});
 
 		})
 	</script>
