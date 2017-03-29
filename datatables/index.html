@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="media/css/jquery.dataTables.css" />
+	<style type="text/css">
+		body {
+			font-size: 12px;
+			text-align: left;
+		}
+	</style>
+</head>
+
+<body>
+	<table id="myTable" class=" display">
+		<thead>
+			<tr>
+				<th>服务区名称</th>
+				<th>门店名称</th>
+				<th>客单数量</th>
+				<th>销售数量</th>
+				<th>销售金额</th>
+				<th>长短款</th>
+				<th>客单均价</th>
+				<th>移动支付金额</th>
+				<th>结账时间</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+
+	<script src="media/js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script src="media/js/jquery.dataTables.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var lang = {
+				"sProcessing": "处理中...",
+				"sLengthMenu": "每页 _MENU_ 项",
+				"sZeroRecords": "没有匹配结果",
+				"sInfo": "当前显示第 _START_ 至 _END_ 项，共 _TOTAL_ 项。",
+				"sInfoEmpty": "当前显示第 0 至 0 项，共 0 项",
+				"sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+				"sInfoPostFix": "",
+				"sSearch": "搜索:",
+				"sUrl": "",
+				"sEmptyTable": "表中数据为空",
+				"sLoadingRecords": "载入中...",
+				"sInfoThousands": ",",
+				"oPaginate": {
+					"sFirst": "首页",
+					"sPrevious": "上页",
+					"sNext": "下页",
+					"sLast": "末页",
+					"sJump": "跳转"
+				},
+				"oAria": {
+					"sSortAscending": ": 以升序排列此列",
+					"sSortDescending": ": 以降序排列此列"
+				}
+			};
+
+			var table = $('#myTable').DataTable({
+
+				"language": lang, //提示信息
+				"lengthMenu": [
+					[30, 50, -1],
+					[30, 50, "All"]
+				], //每页显示条数设置
+				"deferRender": true, //延迟渲染
+				"lengthChange": true, //是否允许用户自定义显示数量
+				"bPaginate": true, //翻页功能
+				"bFilter": true, //列筛序功能
+				"searching": true, //本地搜索
+				"ordering": true, //排序功能
+				"serverSide": false, //启用服务器端分页
+				"processing": true,
+				"Info": false, //页脚信息
+				"autoWidth": false, //自动宽
+				"deferRender": false, //延迟渲染
+				"pagingType": "full_numbers", //分页样式：simple,simple_numbers,full,full_numbers
+				"stripeClasses": ["odd", "even"], //为奇偶行加上样式，兼容不支持CSS伪类的场合
+				"scrollY": false, //Y轴滚动
+				"sScrollX": "100%",
+				"sScrollXInner": "110%",
+				"bScrollCollapse": true, //水平限制宽度
+				
+		
+				"ajax": {
+					"url": "data/EndaccountObject.json",
+				},
+
+				"columns": [
+					{ "data": "SERVERPART_NAME" },
+					{ "data": "SHOPNAME" },
+					{ "data": "TICKETCOUNT" },
+					{ "data": "TOTALCOUNT" },
+					{ "data": "TOTALSELLAMOUNT" },
+					{
+						"data": function(full) {
+							return parseInt(full.CASHPAY).toFixed(2);
+						}
+					},
+					{
+						"data": function(full) {
+							return full.TICKETCOUNT == 0 ? 0 : (full.TOTALSELLAMOUNT / full.TICKETCOUNT).toFixed(2);
+						}
+					},
+					{ "data": "MOBILEPAYMENT" },
+					{ "data": "ENDACCOUNT_DATE" }
+				],
+
+			})
+
+			table.columns().flatten().each(function(colIdx) {
+				// Create the select list and search operation
+				var select = $('<select />')
+					.appendTo(
+						table.column(colIdx).footer()
+					)
+					.on('change', function() {
+						table
+							.column(colIdx)
+							.search($(this).val())
+							.draw();
+					});
+
+				// Get the search data for the first column and add to the select list
+				table
+					.column(colIdx)
+					.cache('search')
+					.sort()
+					.unique()
+					.each(function(d) {
+						select.append($('<option value="' + d + '">' + d + '</option>'));
+					});
+
+			})
+
+		})
+	</script>
+
+</body>
+
+</html>
