@@ -4,7 +4,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
+	<!--数据插件-->
 	<link rel="stylesheet" type="text/css" href="media/css/jquery.dataTables.css" />
+	<!--时间插件-->
+	<link href="src/bootstrap.min.css" rel="stylesheet">
+	<link href="src/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" media="all" href="src/daterangepicker-bs3.css" />
+
 	<style type="text/css">
 		body {
 			font-size: 1.5em;
@@ -12,32 +18,54 @@
 		}
 		
 		#header {
-			text-align: center;
+			text-align: left;
 		}
 		
 		#ttt, #sss {
 			display: inline-block;
 			padding: 2px;
-			margin: 50px 100px 50px 0;
+			margin: 50px 50px 50px 0;
 			width: 200px;
 			height: 50px;
 			font-size: 1.2em;
 		}
-		input{
+		
+		input {
 			padding: 5px;
 			outline: none;
 			border: 1px solid #eee;
+		}
+		
+		#right-data {
+			display: inline-block;
+			width: 40%;
+			position: relative;
+			left: 50%;
+			top: 100px;
 		}
 	</style>
 </head>
 
 <body>
+	<!--选择时间-->
+	<div id="right-data">
+		<label class="control-label" for="reservationtime">选择时间段 </label>
+		<div class="controls">
+			<div class="input-prepend input-group">
+				<span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+				<input type="text" style="width: 400px" name="reservation" id="reservationtime" class="form-control" value="08/01/2013 1:00 PM - 08/01/2013 1:30 PM" class="span4" />
+			</div>
+		</div>
+	</div>
+	<!--选择门店、服务区-->
 	<div id="header">
 		<select name="" id="ttt">
 		</select>
 		<select name="" id="sss">
 		</select>
 	</div>
+
+	<!--表格数据-->
 	<table id="myTable" class=" display">
 		<thead>
 			<tr>
@@ -55,7 +83,7 @@
 		<tbody>
 		</tbody>
 	</table>
-
+	<!--数据js-->
 	<script src="media/js/jquery.js" type="text/javascript" charset="utf-8"></script>
 	<script src="media/js/jquery.dataTables.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
@@ -186,6 +214,21 @@
 			});
 
 		})
+	</script>
+	<!--时间js-->
+	<script type="text/javascript" src="src/bootstrap.min.js"></script>
+	<script type="text/javascript" src="src/moment.js"></script>
+	<script type="text/javascript" src="src/daterangepicker.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#reservationtime').daterangepicker({
+				timePicker: true,
+				timePickerIncrement: 30,
+				format: 'MM/DD/YYYY h:mm A'
+			}, function(start, end, label) {
+				console.log(start.toISOString(), end.toISOString(), label);
+			});
+		});
 	</script>
 
 </body>
